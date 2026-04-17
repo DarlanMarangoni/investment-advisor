@@ -4,13 +4,26 @@ spring:
   threads:
     virtual:
       enabled: true
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/investment_advisor}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
 
 server:
-  port: 8080
+  port: 8085
 
 app:
   stocks:
-    tickers: PETR4,VALE3,ITUB4,BBDC4,ABEV3,WEGE3,RENT3,MGLU3
+    tickers: ${TIKERS}
   brapi:
     base-url: https://brapi.dev
     token: ${BRAPI_TOKEN:}
