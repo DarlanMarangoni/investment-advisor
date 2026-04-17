@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: investment-advisor
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: 8080
+
+app:
+  stocks:
+    tickers: PETR4,VALE3,ITUB4,BBDC4,ABEV3,WEGE3,RENT3,MGLU3
+  brapi:
+    base-url: https://brapi.dev
+    token: ${BRAPI_TOKEN:}
+  scheduler:
+    # A cada 15 minutos, segunda a sexta, das 10h às 17h45 (última execução)
+    cron: "0 */15 10-17 * * MON-FRI"
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    br.com.investmentadvisor: DEBUG

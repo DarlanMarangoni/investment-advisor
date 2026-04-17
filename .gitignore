@@ -23,3 +23,9 @@
 hs_err_pid*
 replay_pid*
 /.idea/
+
+# Maven
+target/
+
+# Environment
+.env
