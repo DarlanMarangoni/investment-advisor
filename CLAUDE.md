@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Tech Stack
 
 - **Java 25** (gerenciado via SDKMAN — ver `.sdkmanrc`)
-- **Spring Boot 3.4.1** com virtual threads habilitadas
+- **Spring Boot 4.0.5** com virtual threads habilitadas
 - **Maven** como build tool
 - **BrAPI** (`https://brapi.dev`) como fonte de cotações da B3
 - Armazenamento em memória (sem banco de dados)
