@@ -1,21 +1,4 @@
 services:
-  postgres:
-    image: postgres:17
-    container_name: investment-advisor-db
-    environment:
-      POSTGRES_DB: investment_advisor
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   app:
     build: .
     container_name: investment-advisor-app
@@ -30,6 +13,3 @@ services:
       TICKERS: ${TICKERS:-PETR4,VALE3,ITUB4,BBDC4,ABEV3,WEGE3,RENT3,MGLU3}
     ports:
       - "8085:8085"
-
-volumes:
-  postgres_data:
