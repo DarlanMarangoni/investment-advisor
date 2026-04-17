@@ -27,6 +27,7 @@ app:
   brapi:
     base-url: https://brapi.dev
     token: ${BRAPI_TOKEN:}
+    tickers-per-request: ${BRAPI_TICKERS_PER_REQUEST:1}
   scheduler:
     # A cada 15 minutos, segunda a sexta, das 10h às 17h45 (última execução)
     cron: "0 */15 10-17 * * MON-FRI"
