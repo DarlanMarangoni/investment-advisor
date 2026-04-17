@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "language": "portuguese",
+  "model": "claude-sonnet-4-6",
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "fastMode": false,
+  "temperature": 0.7,
+  "maxTokens": 4096,
+  "autoCommit": false,
+  "hooksEnable": true,
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(mvn:*)",
+      "Bash(./gradlew:*)",
+      "Bash(java:*)",
+      "Bash(javac:*)"
+    ]
+  }
+}
