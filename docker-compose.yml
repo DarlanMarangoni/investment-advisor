@@ -2,14 +2,13 @@ services:
   app:
     build: .
     container_name: investment-advisor-app
-    depends_on:
-      postgres:
-        condition: service_healthy
     environment:
-      DB_URL: jdbc:postgresql://postgres:5432/investment_advisor
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      DB_URL: jdbc:postgresql://host.docker.internal:5432/investment_advisor
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
       BRAPI_TOKEN: ${BRAPI_TOKEN:-}
       TICKERS: ${TICKERS:-PETR4,VALE3,ITUB4,BBDC4,ABEV3,WEGE3,RENT3,MGLU3}
     ports:
       - "8085:8085"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

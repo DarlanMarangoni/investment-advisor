@@ -29,3 +29,6 @@ target/
 
 # Environment
 .env
+
+# Vaadin generated frontend (gerado automaticamente pelo vaadin:prepare-frontend)
+src/main/frontend/generated/
