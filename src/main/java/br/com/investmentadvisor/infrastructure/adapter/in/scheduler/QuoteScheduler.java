@@ -24,4 +24,13 @@ public class QuoteScheduler {
         log.info("[{}] Scheduler disparado — buscando cotações...", LocalDateTime.now());
         fetchQuotesUseCase.fetchAndStoreQuotes();
     }
+
+    /**
+     * Executa exatamente às 18h de segunda a sexta — última coleta do dia.
+     */
+    @Scheduled(cron = "0 0 18 * * MON-FRI")
+    public void closingFetch() {
+        log.info("[{}] Scheduler de fechamento disparado — última coleta do dia...", LocalDateTime.now());
+        fetchQuotesUseCase.fetchAndStoreQuotes();
+    }
 }

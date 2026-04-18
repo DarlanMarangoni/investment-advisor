@@ -61,7 +61,7 @@ infrastructure/
 
 ## Scheduler
 
-Configurado em `application.yml` via `app.scheduler.cron`. Padrão: `0 */15 10-17 * * MON-FRI` (a cada 15 min, seg–sex, 10h–17h45). Para forçar uma busca fora do horário, use `POST /api/v1/quotes/fetch`.
+Configurado em `application.yml` via `app.scheduler.cron`. Padrão: `0 */15 10-17 * * MON-FRI` (a cada 15 min, seg–sex, 10h–17h45) + execução fixa às 18h (`closingFetch`). Para forçar uma busca fora do horário, use `POST /api/v1/quotes/fetch`.
 
 ## Análise Técnica
 

@@ -2,9 +2,7 @@ package br.com.investmentadvisor.infrastructure.adapter.in.ui;
 
 import br.com.investmentadvisor.domain.model.TechnicalAnalysis;
 import br.com.investmentadvisor.domain.model.TechnicalSignal;
-import br.com.investmentadvisor.domain.port.in.FetchQuotesUseCase;
 import br.com.investmentadvisor.domain.port.in.GetTechnicalAnalysisUseCase;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
@@ -27,13 +25,10 @@ public class AnalysisView extends VerticalLayout {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private final GetTechnicalAnalysisUseCase getTechnicalAnalysisUseCase;
-    private final FetchQuotesUseCase fetchQuotesUseCase;
     private final Grid<TechnicalAnalysis> grid;
 
-    public AnalysisView(GetTechnicalAnalysisUseCase getTechnicalAnalysisUseCase,
-                        FetchQuotesUseCase fetchQuotesUseCase) {
+    public AnalysisView(GetTechnicalAnalysisUseCase getTechnicalAnalysisUseCase) {
         this.getTechnicalAnalysisUseCase = getTechnicalAnalysisUseCase;
-        this.fetchQuotesUseCase = fetchQuotesUseCase;
 
         setSizeFull();
         setPadding(true);
@@ -41,13 +36,10 @@ public class AnalysisView extends VerticalLayout {
 
         H2 title = new H2("Análise Técnica — B3");
 
-        Button refreshButton = new Button("Atualizar cotações", e -> fetchAndRefresh());
-        refreshButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-
         Button reloadButton = new Button("Recarregar tabela", e -> loadData());
-        reloadButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        reloadButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        HorizontalLayout toolbar = new HorizontalLayout(refreshButton, reloadButton);
+        HorizontalLayout toolbar = new HorizontalLayout(reloadButton);
         toolbar.setAlignItems(Alignment.CENTER);
 
         grid = buildGrid();
@@ -107,18 +99,6 @@ public class AnalysisView extends VerticalLayout {
         }
     }
 
-    private void fetchAndRefresh() {
-        try {
-            fetchQuotesUseCase.fetchAndStoreQuotes();
-            loadData();
-            Notification n = Notification.show("Cotações atualizadas com sucesso!");
-            n.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            n.setDuration(3000);
-        } catch (Exception e) {
-            showError("Erro ao buscar cotações: " + e.getMessage());
-        }
-    }
-
     private Span signalBadge(TechnicalSignal signal) {
         if (signal == null) return new Span("—");
 
@@ -131,9 +111,9 @@ public class AnalysisView extends VerticalLayout {
                 .set("color", "white");
 
         String color = switch (signal) {
-            case BUY  -> "#2e7d32";
-            case SELL -> "#c62828";
-            case HOLD -> "#f57c00";
+                case BUY  -> "#2e7d32";
+                case SELL -> "#c62828";
+                case HOLD -> "#f57c00";
         };
         badge.getStyle().set("background-color", color);
         return badge;
