@@ -14,12 +14,15 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.security.AuthenticationContext;
+import jakarta.annotation.security.PermitAll;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 
 @Route("")
 @PageTitle("Investment Advisor")
+@PermitAll
 public class AnalysisView extends VerticalLayout {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -27,7 +30,8 @@ public class AnalysisView extends VerticalLayout {
     private final GetTechnicalAnalysisUseCase getTechnicalAnalysisUseCase;
     private final Grid<TechnicalAnalysis> grid;
 
-    public AnalysisView(GetTechnicalAnalysisUseCase getTechnicalAnalysisUseCase) {
+    public AnalysisView(GetTechnicalAnalysisUseCase getTechnicalAnalysisUseCase,
+                        AuthenticationContext authContext) {
         this.getTechnicalAnalysisUseCase = getTechnicalAnalysisUseCase;
 
         setSizeFull();
@@ -39,8 +43,16 @@ public class AnalysisView extends VerticalLayout {
         Button reloadButton = new Button("Recarregar tabela", e -> loadData());
         reloadButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        HorizontalLayout toolbar = new HorizontalLayout(reloadButton);
+        String username = authContext.getPrincipalName().orElse("Usuário");
+        Span userLabel = new Span("Olá, " + username);
+        userLabel.getStyle().set("color", "var(--lumo-secondary-text-color)");
+
+        Button logoutButton = new Button("Sair", e -> authContext.logout());
+        logoutButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);
+
+        HorizontalLayout toolbar = new HorizontalLayout(reloadButton, userLabel, logoutButton);
         toolbar.setAlignItems(Alignment.CENTER);
+        toolbar.setFlexGrow(1, userLabel);
 
         grid = buildGrid();
 
