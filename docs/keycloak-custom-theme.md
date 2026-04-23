@@ -14,6 +14,7 @@ O tema replica a aparência do `LoginView` Vaadin:
 - Botão primário azul full-width
 - Textos traduzidos para PT-BR
 - Título da página substituído por **Investment Advisor**
+- Header superior (`kc-header` / `kc-header-wrapper`) removido via `template.ftl` customizado
 
 ---
 
@@ -46,19 +47,26 @@ Os arquivos do tema estão em `keycloak/themes/investment-advisor/`. O diretóri
 | `messages/messages_en.properties` | Textos em inglês (ex: título, labels) |
 | `messages/messages_pt_BR.properties` | Textos em português |
 | `theme.properties` | Tema pai, arquivos CSS carregados, locales |
-| `template.ftl` | Estrutura HTML da página |
+| `template.ftl` | Estrutura HTML da página (header removido) |
 
 ---
 
-### 2. Reinicie o container
+### 2. Limpe o cache gzip (opção rápida)
 
-O Keycloak serve os arquivos CSS com `Cache-Control: max-age=2592000` (30 dias). Qualquer mudança de CSS exige reinício para o cache ser invalidado:
+O Keycloak mantém um cache de arquivos comprimidos em `/opt/keycloak/data/tmp/kc-gzip-cache/`. Na maioria dos casos basta limpar esse cache, sem reiniciar o container:
+
+```bash
+docker exec keycloak rm -rf /opt/keycloak/data/tmp/kc-gzip-cache/ \
+  && docker exec keycloak mkdir -p /opt/keycloak/data/tmp/kc-gzip-cache
+```
+
+Se a mudança não aparecer mesmo após limpar o cache gzip, reinicie o container:
 
 ```bash
 docker restart keycloak
 ```
 
-Após reiniciar, recarregue a página com **`Ctrl+Shift+R`** (força busca do CSS novo, ignorando cache do browser).
+Após qualquer uma das opções, recarregue a página com **`Ctrl+Shift+R`** (força busca do CSS novo, ignorando cache do browser).
 
 > **Atenção:** F5 comum não é suficiente — o browser vai usar a versão cacheada. Use sempre `Ctrl+Shift+R` após mudanças de CSS.
 
@@ -89,6 +97,22 @@ Por padrão o Keycloak usa o idioma do browser. Para forçar PT-BR independente 
 7. Clique em **Save**
 
 > Se a página ainda aparecer em inglês após configurar, limpe os cookies do `localhost:9080` no browser — o Keycloak armazena o locale da sessão em cookie e ele pode estar fixado em `en`.
+
+---
+
+## Remoção do header superior
+
+O template base do Keycloak (`keycloak.v2`) inclui um `<header id="kc-header">` que exibe o nome do realm no topo da página, acima do card de login:
+
+```html
+<header id="kc-header" class="pf-v5-c-login__header">
+  <div id="kc-header-wrapper" class="pf-v5-c-brand">investment-advisor</div>
+</header>
+```
+
+Para removê-lo, foi criado um `template.ftl` próprio no tema (cópia do template base sem esse bloco). O Keycloak dá prioridade ao `template.ftl` do tema sobre o do tema pai, então nenhuma outra mudança foi necessária.
+
+> Não é possível esconder o header apenas com CSS de forma confiável, pois o PF5 reserva espaço para ele no grid. A abordagem correta é removê-lo do template.
 
 ---
 
