@@ -1,6 +1,8 @@
 package br.com.investmentadvisor.application.service;
 
+import br.com.investmentadvisor.domain.model.EarningsAnalysis;
 import br.com.investmentadvisor.domain.port.in.UploadEarningsReportUseCase;
+import br.com.investmentadvisor.domain.port.out.EarningsAnalysisPort;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -12,10 +14,18 @@ import java.io.IOException;
 @Service
 public class EarningsReportService implements UploadEarningsReportUseCase {
 
+    private final EarningsAnalysisPort earningsAnalysisPort;
+
+    public EarningsReportService(EarningsAnalysisPort earningsAnalysisPort) {
+        this.earningsAnalysisPort = earningsAnalysisPort;
+    }
+
     @Override
-    public String upload(MultipartFile file) {
+    public EarningsAnalysis upload(MultipartFile file, String ticker) {
         validatePdf(file);
-        return extractText(file);
+        String reportText = extractText(file);
+        String analysis = earningsAnalysisPort.analyze(reportText, ticker.toUpperCase());
+        return new EarningsAnalysis(ticker.toUpperCase(), analysis);
     }
 
     private void validatePdf(MultipartFile file) {
