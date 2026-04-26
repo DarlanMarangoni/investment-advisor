@@ -1,9 +1,15 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    quotes:
+      url: jdbc:h2:mem:quotesdb;DB_CLOSE_DELAY=-1
+      driver-class-name: org.h2.Driver
+      username: sa
+      password:
+    analytics:
+      url: jdbc:h2:mem:analyticsdb;DB_CLOSE_DELAY=-1
+      driver-class-name: org.h2.Driver
+      username: sa
+      password:
   jpa:
     hibernate:
       ddl-auto: create-drop

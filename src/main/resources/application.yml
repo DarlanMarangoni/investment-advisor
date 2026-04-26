@@ -19,10 +19,16 @@ spring:
             issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:9080/realms/investment-advisor}
             user-name-attribute: preferred_username
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    quotes:
+      url: ${DB_QUOTES_URL}
+      username: ${DB_QUOTES_USERNAME}
+      password: ${DB_QUOTES_PASSWORD}
+      driver-class-name: org.postgresql.Driver
+    analytics:
+      url: ${DB_ANALYTICS_URL}
+      username: ${DB_ANALYTICS_USERNAME}
+      password: ${DB_ANALYTICS_PASSWORD}
+      driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
