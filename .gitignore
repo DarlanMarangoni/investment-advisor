@@ -32,3 +32,9 @@ target/
 
 # Vaadin generated frontend (gerado automaticamente pelo vaadin:prepare-frontend)
 src/main/frontend/generated/
+/node_modules/
+/src/main/bundles/
+/package.json
+/package-lock.json
+/tsconfig.json
+/types.d.ts

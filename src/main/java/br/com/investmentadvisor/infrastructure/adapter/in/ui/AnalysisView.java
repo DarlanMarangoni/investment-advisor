@@ -7,6 +7,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -20,7 +21,7 @@ import jakarta.annotation.security.PermitAll;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 
-@Route("")
+@Route("analysis")
 @PageTitle("Investment Advisor")
 @PermitAll
 public class AnalysisView extends VerticalLayout {
@@ -37,11 +38,27 @@ public class AnalysisView extends VerticalLayout {
         setSizeFull();
         setPadding(true);
         setSpacing(true);
+        getStyle().set("background", "var(--lumo-contrast-5pct)");
 
+        grid = buildGrid();
+        VerticalLayout gridCard = buildGridCard();
+
+        add(buildToolbar(authContext), gridCard);
+        expand(gridCard);
+
+        loadData();
+    }
+
+    private HorizontalLayout buildToolbar(AuthenticationContext authContext) {
         H2 title = new H2("Análise Técnica — B3");
+        title.getStyle().set("margin", "0");
 
         Button reloadButton = new Button("Recarregar tabela", e -> loadData());
         reloadButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        Button earningsButton = new Button("Análise de Resultados",
+                e -> getUI().ifPresent(ui -> ui.navigate("")));
+        earningsButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
 
         String username = authContext.getPrincipalName().orElse("Usuário");
         Span userLabel = new Span("Olá, " + username);
@@ -50,16 +67,23 @@ public class AnalysisView extends VerticalLayout {
         Button logoutButton = new Button("Sair", e -> authContext.logout());
         logoutButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ERROR);
 
-        HorizontalLayout toolbar = new HorizontalLayout(reloadButton, userLabel, logoutButton);
+        HorizontalLayout toolbar = new HorizontalLayout(title, reloadButton, earningsButton, userLabel, logoutButton);
         toolbar.setAlignItems(Alignment.CENTER);
         toolbar.setFlexGrow(1, userLabel);
+        toolbar.setWidthFull();
+        return toolbar;
+    }
 
-        grid = buildGrid();
-
-        add(title, toolbar, grid);
-        expand(grid);
-
-        loadData();
+    private VerticalLayout buildGridCard() {
+        VerticalLayout card = new VerticalLayout(new H3("Posições"), grid);
+        card.getStyle()
+                .set("background", "white")
+                .set("border-radius", "8px")
+                .set("box-shadow", "0 2px 12px rgba(0,0,0,0.07)")
+                .set("padding", "20px");
+        card.setSizeFull();
+        grid.setSizeFull();
+        return card;
     }
 
     private Grid<TechnicalAnalysis> buildGrid() {

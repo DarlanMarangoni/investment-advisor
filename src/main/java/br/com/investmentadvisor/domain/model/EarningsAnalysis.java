@@ -1,3 +1,5 @@
 package br.com.investmentadvisor.domain.model;
 
-public record EarningsAnalysis(String ticker, String analysis) {}
+import java.time.LocalDateTime;
+
+public record EarningsAnalysis(String ticker, String analysis, LocalDateTime analyzedAt) {}

@@ -70,3 +70,18 @@ management:
 logging:
   level:
     br.com.investmentadvisor: DEBUG
+
+llm:
+  provider: ollama  # ollama | openai | anthropic
+  ollama:
+    base-url: ${LLM_OLLAMA_BASE_URL:http://localhost:11434}
+    model: ${LLM_OLLAMA_MODEL:llama3.1:8b}
+  openai:
+    api-key: ${OPENAI_API_KEY:}
+    model: ${OPENAI_MODEL:gpt-4o-mini}
+  anthropic:
+    api-key: ${ANTHROPIC_API_KEY:}
+    model: ${ANTHROPIC_MODEL:claude-haiku-4-5}
+  gemini:
+    api-key: ${GEMINI_API_KEY:}
+    model: ${GEMINI_MODEL:gemini-2.0-flash}

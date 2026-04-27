@@ -2,7 +2,9 @@ package br.com.investmentadvisor.domain.port.in;
 
 import br.com.investmentadvisor.domain.model.EarningsAnalysis;
 
-public interface UploadEarningsReportUseCase {
+import java.util.List;
 
-    EarningsAnalysis upload(byte[] pdfBytes, String ticker);
+public interface GetEarningsAnalysesUseCase {
+
+    List<EarningsAnalysis> findAll();
 }
