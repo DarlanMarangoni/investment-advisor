@@ -1,4 +1,4 @@
-# Alterações — Feature: Análise de Resultados
+# Alterações — Feature: Análise de Resultados (backend + UI)
 
 Branch: `featute/analise_resultados`
 
