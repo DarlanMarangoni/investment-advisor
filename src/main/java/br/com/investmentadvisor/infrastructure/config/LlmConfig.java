@@ -62,4 +62,18 @@ public class LlmConfig {
                 .timeout(Duration.ofMinutes(5))
                 .build();
     }
+
+    @Bean
+    @ConditionalOnProperty(name = "llm.provider", havingValue = "deepseek")
+    public ChatLanguageModel deepSeekChatModel(
+            @Value("${llm.deepseek.api-key}") String apiKey,
+            @Value("${llm.deepseek.base-url:https://api.deepseek.com/v1}") String baseUrl,
+            @Value("${llm.deepseek.model:deepseek-chat}") String model) {
+        return OpenAiChatModel.builder()
+                .apiKey(apiKey)
+                .baseUrl(baseUrl)
+                .modelName(model)
+                .timeout(Duration.ofMinutes(5))
+                .build();
+    }
 }

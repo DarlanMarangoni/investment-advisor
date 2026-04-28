@@ -72,7 +72,7 @@ logging:
     br.com.investmentadvisor: DEBUG
 
 llm:
-  provider: ollama  # ollama | openai | anthropic
+  provider: deepseek  # ollama | openai | anthropic | gemini | deepseek
   ollama:
     base-url: ${LLM_OLLAMA_BASE_URL:http://localhost:11434}
     model: ${LLM_OLLAMA_MODEL:llama3.1:8b}
@@ -85,3 +85,7 @@ llm:
   gemini:
     api-key: ${GEMINI_API_KEY:}
     model: ${GEMINI_MODEL:gemini-2.0-flash}
+  deepseek:
+    api-key: ${DEEPSEEK_API_KEY:}
+    base-url: ${DEEPSEEK_BASE_URL:https://api.deepseek.com/v1}
+    model: ${DEEPSEEK_MODEL:deepseek-chat}
