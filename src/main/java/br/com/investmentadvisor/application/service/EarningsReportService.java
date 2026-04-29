@@ -27,11 +27,19 @@ public class EarningsReportService implements UploadEarningsReportUseCase, GetEa
     }
 
     @Override
-    public EarningsAnalysis upload(byte[] pdfBytes, String ticker) {
+    public EarningsAnalysis upload(byte[] pdfBytes, String ticker, int referenceQuarter, int referenceYear) {
         validatePdf(pdfBytes);
+        String normalizedTicker = ticker.toUpperCase();
+
+        return earningsAnalysisRepositoryPort
+                .findByKey(normalizedTicker, referenceQuarter, referenceYear)
+                .orElseGet(() -> analyze(pdfBytes, normalizedTicker, referenceQuarter, referenceYear));
+    }
+
+    private EarningsAnalysis analyze(byte[] pdfBytes, String ticker, int referenceQuarter, int referenceYear) {
         String reportText = extractText(pdfBytes);
-        String analysis = earningsAnalysisPort.analyze(reportText, ticker.toUpperCase());
-        EarningsAnalysis result = new EarningsAnalysis(ticker.toUpperCase(), analysis, LocalDateTime.now());
+        String analysis = earningsAnalysisPort.analyze(reportText, ticker);
+        EarningsAnalysis result = new EarningsAnalysis(ticker, referenceQuarter, referenceYear, analysis, LocalDateTime.now());
         earningsAnalysisRepositoryPort.save(result);
         return result;
     }

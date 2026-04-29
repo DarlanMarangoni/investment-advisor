@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class PostgresEarningsAnalysisRepository implements EarningsAnalysisRepos
     @Transactional("analyticsTransactionManager")
     public void save(EarningsAnalysis analysis) {
         jpaRepository.save(EarningsAnalysisEntity.builder()
-                .ticker(analysis.ticker())
+                .id(new EarningsAnalysisId(analysis.ticker(), analysis.referenceQuarter(), analysis.referenceYear()))
                 .analysis(analysis.analysis())
                 .analyzedAt(analysis.analyzedAt())
                 .build());
@@ -28,7 +29,23 @@ public class PostgresEarningsAnalysisRepository implements EarningsAnalysisRepos
     @Transactional(value = "analyticsTransactionManager", readOnly = true)
     public List<EarningsAnalysis> findAll() {
         return jpaRepository.findAllByOrderByAnalyzedAtDesc().stream()
-                .map(e -> new EarningsAnalysis(e.getTicker(), e.getAnalysis(), e.getAnalyzedAt()))
+                .map(this::toModel)
                 .toList();
+    }
+
+    @Override
+    @Transactional(value = "analyticsTransactionManager", readOnly = true)
+    public Optional<EarningsAnalysis> findByKey(String ticker, int referenceQuarter, int referenceYear) {
+        return jpaRepository.findById(new EarningsAnalysisId(ticker, referenceQuarter, referenceYear))
+                .map(this::toModel);
+    }
+
+    private EarningsAnalysis toModel(EarningsAnalysisEntity e) {
+        return new EarningsAnalysis(
+                e.getId().getTicker(),
+                e.getId().getReferenceQuarter(),
+                e.getId().getReferenceYear(),
+                e.getAnalysis(),
+                e.getAnalyzedAt());
     }
 }

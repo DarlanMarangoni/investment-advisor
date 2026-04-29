@@ -19,12 +19,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class EarningsAnalysisEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false, length = 10)
-    private String ticker;
+    @EmbeddedId
+    private EarningsAnalysisId id;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String analysis;

@@ -4,5 +4,5 @@ import br.com.investmentadvisor.domain.model.EarningsAnalysis;
 
 public interface UploadEarningsReportUseCase {
 
-    EarningsAnalysis upload(byte[] pdfBytes, String ticker);
+    EarningsAnalysis upload(byte[] pdfBytes, String ticker, int referenceQuarter, int referenceYear);
 }

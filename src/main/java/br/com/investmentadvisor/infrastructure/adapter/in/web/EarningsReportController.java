@@ -27,8 +27,10 @@ public class EarningsReportController {
     @Operation(summary = "Faz upload de um PDF de resultado e retorna análise gerada por IA")
     public ResponseEntity<EarningsAnalysis> upload(
             @RequestPart("file") MultipartFile file,
-            @RequestParam("ticker") String ticker) throws IOException {
-        return ResponseEntity.ok(uploadEarningsReportUseCase.upload(file.getBytes(), ticker));
+            @RequestParam("ticker") String ticker,
+            @RequestParam("referenceQuarter") int referenceQuarter,
+            @RequestParam("referenceYear") int referenceYear) throws IOException {
+        return ResponseEntity.ok(uploadEarningsReportUseCase.upload(file.getBytes(), ticker, referenceQuarter, referenceYear));
     }
 
     @GetMapping
