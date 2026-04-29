@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
@@ -18,13 +19,17 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import jakarta.annotation.security.PermitAll;
+import org.commonmark.ext.gfm.tables.TablesExtension;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
+
+import java.util.List;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
@@ -52,7 +57,7 @@ public class EarningsView extends VerticalLayout {
     private final HorizontalLayout progressRow = new HorizontalLayout();
     private final VerticalLayout resultSection = new VerticalLayout();
     private final H3 resultTitle = new H3();
-    private final TextArea analysisArea = new TextArea();
+    private final Div markdownContent = new Div();
     private final Grid<EarningsAnalysis> historyGrid = new Grid<>(EarningsAnalysis.class, false);
 
     public EarningsView(UploadEarningsReportUseCase uploadEarningsReportUseCase,
@@ -149,10 +154,12 @@ public class EarningsView extends VerticalLayout {
     }
 
     private VerticalLayout buildResultSection() {
-        analysisArea.setReadOnly(true);
-        analysisArea.setWidthFull();
-        analysisArea.setHeight("400px");
-        analysisArea.getStyle().set("font-family", "monospace").set("font-size", "0.9em");
+        markdownContent.getStyle()
+                .set("overflow-y", "auto")
+                .set("max-height", "500px")
+                .set("width", "100%")
+                .set("line-height", "1.7")
+                .set("font-size", "0.9em");
 
         Button closeBtn = new Button("Fechar", e -> resultSection.setVisible(false));
         closeBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
@@ -162,7 +169,7 @@ public class EarningsView extends VerticalLayout {
         header.setWidthFull();
         header.setFlexGrow(1, resultTitle);
 
-        resultSection.add(header, analysisArea);
+        resultSection.add(header, markdownContent);
         styleCard(resultSection);
         resultSection.setVisible(false);
         return resultSection;
@@ -262,7 +269,7 @@ public class EarningsView extends VerticalLayout {
     private void showAnalysis(EarningsAnalysis analysis) {
         resultTitle.setText("Análise — " + analysis.ticker()
                 + " · " + QUARTER_LABELS[analysis.referenceQuarter() - 1] + "/" + analysis.referenceYear());
-        analysisArea.setValue(analysis.analysis());
+        markdownContent.getElement().setProperty("innerHTML", toHtml(analysis.analysis()));
         resultSection.setVisible(true);
     }
 
@@ -273,18 +280,43 @@ public class EarningsView extends VerticalLayout {
         dialog.setWidth("860px");
         dialog.setHeight("640px");
 
-        TextArea area = new TextArea();
-        area.setValue(analysis.analysis());
-        area.setReadOnly(true);
-        area.setSizeFull();
-        area.getStyle().set("font-family", "monospace").set("font-size", "0.85em");
+        Div content = new Div();
+        content.getElement().setProperty("innerHTML", toHtml(analysis.analysis()));
+        content.getStyle()
+                .set("overflow-y", "auto")
+                .set("height", "100%")
+                .set("padding", "8px")
+                .set("line-height", "1.7")
+                .set("font-size", "0.9em")
+                .set("box-sizing", "border-box");
+        content.setSizeFull();
 
         Button closeBtn = new Button("Fechar", e -> dialog.close());
         closeBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-        dialog.add(area);
+        dialog.add(content);
         dialog.getFooter().add(closeBtn);
         dialog.open();
+    }
+
+    private static final String MARKDOWN_CSS = """
+            <style>
+              .md h1,.md h2,.md h3 { margin: 14px 0 6px; font-weight: 600; }
+              .md p  { margin: 6px 0; }
+              .md ul,.md ol { padding-left: 20px; margin: 6px 0; }
+              .md table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.93em; }
+              .md th { background: #f0f4f8; font-weight: 600; border: 1px solid #c8d0da; padding: 7px 12px; text-align: left; }
+              .md td { border: 1px solid #c8d0da; padding: 7px 12px; }
+              .md tr:nth-child(even) td { background: #fafbfc; }
+              .md code { background: #f4f4f4; border-radius: 3px; padding: 1px 4px; font-size: 0.88em; }
+            </style>
+            """;
+
+    private String toHtml(String markdown) {
+        var extensions = List.of(TablesExtension.create());
+        Parser parser = Parser.builder().extensions(extensions).build();
+        HtmlRenderer renderer = HtmlRenderer.builder().extensions(extensions).build();
+        return MARKDOWN_CSS + "<div class=\"md\">" + renderer.render(parser.parse(markdown)) + "</div>";
     }
 
     private void loadHistory() {
